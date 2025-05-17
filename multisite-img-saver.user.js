@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Multisite Image Saver
 // @namespace    https://github.com/ZoeSpark/multisite-img-saver
-// @version      1.0.0
+// @version      1.1.0
 // @description  Tampermonkey script for multi-site image download
 // @author       ZoeSpark
 // @match        https://mp.weixin.qq.com/s*
 // @match        *://*.weibo.com/*
 // @match        *://*.weibo.cn/*
 // @match        https://sspai.com/post/*
+// @match        https://www.bilibili.com/opus/*
 // @grant        GM_addStyle
 // @grant        GM_download
 // ==/UserScript==
@@ -39,6 +40,7 @@
     const isSP = /sspai\.com$/.test(host);
     const isWb = /(weibo\.(com|cn))$/.test(host) || host.includes('.weibo.');
     const isTT = isWb && /\/ttarticle\//.test(location.pathname); // 微博长文
+    const isBili = /bilibili\.com$/.test(host); // Bilibili
     const safe = s => s.replace(/[\\/:"*?<>|]+/g, '_');
 
     /* ---------- 3. 文件名前缀 ---------- */
@@ -67,6 +69,12 @@
         return safe(raw.replace(/ - 少数派$/, '').trim().slice(0, 60)) || 'sspai';
     })();
 
+    const biliPrefix = (() => {
+        if (!isBili) return '';
+        const raw = document.querySelector('head>title')?.textContent || '';
+        return safe(raw.replace(/_哔哩哔哩_Bilibili$/, '').trim().slice(0, 60)) || 'bili';
+    })();
+
     /* ---------- 4. URL → 原图 ---------- */
     function toHD(src) {
         try {
@@ -93,6 +101,7 @@
         if (isSP) return document.querySelector('#app .article-body .content') || document;
         if (isTT) return document.querySelector('.WB_editor_iframe') ||
             document.querySelector('.main_editor') || document;
+        if (isBili) return document.querySelector('#app .opus-module-content') || document;
         if (isWb) return document.querySelector('article') || document;
         return document;
     }
@@ -131,7 +140,7 @@
             return;
         }
 
-        const prefix = isWx ? wxPrefix : (isSP ? spPrefix : wbPrefix);
+        const prefix = isWx ? wxPrefix : (isSP ? spPrefix : (isBili ? biliPrefix : wbPrefix));
 
         console.group('%c📸 即将下载的高清图片列表', 'color:#07c160;font-weight:bold;');
         console.table(urls);
