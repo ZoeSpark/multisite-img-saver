@@ -16,6 +16,7 @@ Tampermonkey userscript for one-click downloading article images from multiple p
 * **WeChat**
 * **Weibo (posts and long articles)**
 * **SSPAI**
+* **Bilibili**
 
 ## Installation
 
@@ -39,5 +40,5 @@ Feel free to submit pull requests or open issues if you find a bug or have a fea
 
 ## Future Plans
 
-* Support for more platforms (e.g., bilibili, Zhihu, CSDN)
+* Support for more platforms (e.g. Zhihu, CSDN)
 * Improved error handling and performance optimization
